@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1a1a24;
+    background-color: #0d0c10;
+  }
+  
+  .font-luxury {
+    font-family: 'Cinzel', serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* 3D Cinematic Spatial Styles */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1500 {
+  perspective: 1500px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.translate-z-10 {
+  transform: translateZ(10px);
+}
+
+.translate-z-20 {
+  transform: translateZ(20px);
+}
+
+.translate-z-30 {
+  transform: translateZ(30px);
+}
+
+.translate-z-40 {
+  transform: translateZ(40px);
+}
+
+.translate-z-50 {
+  transform: translateZ(50px);
+}
+
+/* 3D Extruded Typography Effects */
+.text-3d-obsidian {
+  color: #17151c;
+  text-shadow:
+    0 1px 0 #4b445a,
+    0 2px 0 #3a3347,
+    0 3px 0 #282233,
+    0 4px 0 #1b1624,
+    0 5px 0 #100d16,
+    0 6px 1px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(226, 183, 85, 0.2),
+    0 12px 24px rgba(0, 0, 0, 0.25);
+}
+
+.text-3d-gold {
+  color: #c49520;
+  text-shadow:
+    0 1px 0 #fdf0c7,
+    0 2px 0 #f0d175,
+    0 3px 0 #dbad37,
+    0 4px 0 #b88a1b,
+    0 5px 0 #8f670a,
+    0 6px 1px rgba(0, 0, 0, 0.35),
+    0 0 18px rgba(226, 183, 85, 0.5),
+    0 12px 24px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes textFloat3D {
+  0%, 100% {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px);
+  }
+  50% {
+    transform: perspective(1000px) rotateX(4deg) rotateY(-5deg) translateZ(14px);
+  }
+}
+
+.animate-text-float-3d {
+  animation: textFloat3D 6s ease-in-out infinite;
+}
+
+/* Cinematic Glow & Rim Light Effects */
+.cinematic-glow {
+  box-shadow: 0 0 40px -10px rgba(226, 183, 85, 0.2), 0 20px 30px -15px rgba(0, 0, 0, 0.7);
+}
+
+.cinematic-card-rim {
+  border: 1px solid rgba(226, 183, 85, 0.22);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(250, 248, 245, 0.92) 100%);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08), 0 0 1px 1px rgba(226, 183, 85, 0.15);
+}
+
+.cinematic-dark-card {
+  border: 1px solid rgba(226, 183, 85, 0.25);
+  background: linear-gradient(135deg, rgba(22, 20, 26, 0.88) 0%, rgba(14, 13, 17, 0.94) 100%);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.7), 0 0 20px -5px rgba(226, 183, 85, 0.12);
+}
+
+/* Subtle Cinematic Letterbox Bars (Toggleable) */
+.cinema-bars-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: #000000;
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+  animation: slideDownBar 0.5s ease forwards;
+}
+
+.cinema-bars-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: #000000;
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.8);
+  animation: slideUpBar 0.5s ease forwards;
+}
+
+@keyframes slideDownBar {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes slideUpBar {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #141318;
+}
+::-webkit-scrollbar-thumb {
+  background: #554422;
+  border-radius: 9999px;
+  border: 2px solid #141318;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c59b27;
+}
+

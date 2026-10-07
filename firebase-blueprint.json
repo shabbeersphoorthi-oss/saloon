@@ -1,0 +1,141 @@
+{
+  "entities": {
+    "Service": {
+      "title": "Service",
+      "description": "Salon grooming or styling service definition",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "enum": ["Hair", "Grooming", "Skin & Facial", "Packages"] },
+        "description": { "type": "string", "maxLength": 500 },
+        "duration": { "type": "number" },
+        "price": { "type": "number" },
+        "discountPrice": { "type": "number" },
+        "image": { "type": "string", "maxLength": 500 },
+        "active": { "type": "boolean" },
+        "featured": { "type": "boolean" }
+      },
+      "required": ["id", "name", "category", "duration", "price", "active"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Registered salon customer profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 20 },
+        "email": { "type": "string", "maxLength": 100 },
+        "totalVisits": { "type": "number" },
+        "totalSpending": { "type": "number" },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "phone"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Customer salon appointment reservation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "bookingId": { "type": "string", "maxLength": 50 },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "customerPhone": { "type": "string", "maxLength": 20 },
+        "customerEmail": { "type": "string", "maxLength": 100 },
+        "serviceIds": { "type": "array" },
+        "serviceNames": { "type": "array" },
+        "appointmentDate": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "duration": { "type": "number" },
+        "subtotal": { "type": "number" },
+        "discount": { "type": "number" },
+        "total": { "type": "number" },
+        "couponCode": { "type": "string" },
+        "status": { "type": "string", "enum": ["Pending", "Confirmed", "Completed", "Cancelled", "No Show"] },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "bookingId", "customerName", "customerPhone", "appointmentDate", "startTime", "duration", "total", "status"]
+    },
+    "Offer": {
+      "title": "Offer",
+      "description": "Salon promotional discount offer or coupon",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "couponCode": { "type": "string", "maxLength": 30 },
+        "description": { "type": "string", "maxLength": 300 },
+        "discountType": { "type": "string", "enum": ["percentage", "fixed"] },
+        "discountAmount": { "type": "number" },
+        "minBookingAmount": { "type": "number" },
+        "maxDiscount": { "type": "number" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "usageLimit": { "type": "number" },
+        "usedCount": { "type": "number" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["id", "couponCode", "discountType", "discountAmount", "active"]
+    },
+    "BusinessSettings": {
+      "title": "BusinessSettings",
+      "description": "General settings, operational hours, and metadata for Srinivas Salon",
+      "type": "object",
+      "properties": {
+        "salonName": { "type": "string" },
+        "owners": { "type": "array" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "currency": { "type": "string" }
+      }
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "In-app and admin notification message",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "recipientType": { "type": "string", "enum": ["admin", "customer"] },
+        "title": { "type": "string", "maxLength": 150 },
+        "message": { "type": "string", "maxLength": 500 },
+        "type": { "type": "string" },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "recipientType", "title", "message", "read"]
+    }
+  },
+  "firestore": {
+    "/services/{serviceId}": {
+      "schema": "Service",
+      "description": "Catalog of salon services, haircut packages, facials, and prices"
+    },
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Salon customers directory and visit statistics"
+    },
+    "/appointments/{appointmentId}": {
+      "schema": "Appointment",
+      "description": "Booked salon appointments with status and date/time tracking"
+    },
+    "/offers/{offerId}": {
+      "schema": "Offer",
+      "description": "Promotional coupon codes and discount criteria"
+    },
+    "/businessSettings/{settingId}": {
+      "schema": "BusinessSettings",
+      "description": "Operating hours, salon metadata, and blocked dates"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "Real-time alerts for bookings, cancellations, and reminders"
+    }
+  }
+}

@@ -1,0 +1,112 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email in ['r.srinivas@salon.com', 'm.srinivas@salon.com', 'shabbeersphoorthi@gmail.com']
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Services Catalog: Public can read active services; only admins can write
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Categories: Public read, Admin write
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Offers & Coupons: Public can read active offers, Admin write
+    match /offers/{offerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Offer usage records
+    match /offerUsage/{usageId} {
+      allow read, write: if true;
+    }
+
+    // Appointments:
+    // - Customers can create appointments
+    // - Customers can read their appointments or look up by booking ID
+    // - Admins can read, update status, and manage all appointments
+    match /appointments/{appointmentId} {
+      allow read: if true;
+      allow create: if request.resource.data.total >= 0 &&
+                       request.resource.data.duration > 0 &&
+                       request.resource.data.customerName is string &&
+                       request.resource.data.customerPhone is string;
+      allow update: if isAdmin() || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'notes', 'appointmentDate', 'startTime', 'endTime', 'updatedAt'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /appointmentServices/{serviceMappingId} {
+      allow read, write: if true;
+    }
+
+    // Customers: Admins can read & manage; Customers can create their profile
+    match /customers/{customerId} {
+      allow read: if true;
+      allow create, update: if true;
+      allow delete: if isAdmin();
+    }
+
+    // Business Settings & Operating Hours
+    match /businessSettings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /businessHours/{hourId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /blockedDates/{dateId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      allow delete: if isAdmin();
+    }
+
+    // Admins Collection
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Users
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+    }
+  }
+}

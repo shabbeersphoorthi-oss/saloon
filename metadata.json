@@ -1,0 +1,6 @@
+{
+  "name": "Bloom Saloon - Appointment Booking & Admin Management",
+  "description": "Premier salon appointment booking, grooming services, rate card menu, and admin management panel for Bloom Saloon. Call: 8309578606.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
