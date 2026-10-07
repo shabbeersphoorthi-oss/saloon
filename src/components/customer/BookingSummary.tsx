@@ -1,7 +1,7 @@
 import React from 'react';
 import { Service, Offer } from '../../types/salon';
 import { formatCurrency, formatDate, calculateEndTime } from '../../utils/formatters';
-import { Scissors, Calendar, Clock, User, Phone, Mail, Tag, ShieldCheck } from 'lucide-react';
+import { Scissors, Calendar, Clock, User, Phone, Mail, Tag, ShieldCheck, X } from 'lucide-react';
 
 interface BookingSummaryProps {
   services: Service[];
@@ -21,6 +21,7 @@ interface BookingSummaryProps {
   homeAddress?: string;
   onConfirm: () => void;
   isSubmitting?: boolean;
+  onDeselectService?: (serviceId: string) => void;
 }
 
 export const BookingSummary: React.FC<BookingSummaryProps> = ({
@@ -41,6 +42,7 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
   homeAddress = '',
   onConfirm,
   isSubmitting = false,
+  onDeselectService,
 }) => {
   const endTime = selectedTime ? calculateEndTime(selectedTime, totalDuration) : '';
 
@@ -82,23 +84,50 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
 
       {/* Selected Services */}
       <div>
-        <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-          <Scissors size={13} className="text-[#B88728]" />
-          Selected Services ({services.length})
-        </h4>
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Scissors size={13} className="text-[#B88728]" />
+            Selected Services ({services.length})
+          </h4>
+          {services.length > 0 && onDeselectService && (
+            <span className="text-[10px] text-stone-400 italic">Click ✕ to deselect</span>
+          )}
+        </div>
         <div className="divide-y divide-stone-100">
-          {services.map(srv => {
-            const price = srv.discountPrice && srv.discountPrice < srv.price ? srv.discountPrice : srv.price;
-            return (
-              <div key={srv.id} className="py-2.5 flex items-center justify-between text-sm">
-                <div>
-                  <span className="font-semibold text-stone-800">{srv.name}</span>
-                  <span className="text-xs text-stone-400 block">{srv.category} • {srv.duration} mins</span>
+          {services.length === 0 ? (
+            <div className="py-4 px-3 text-center text-xs text-stone-400 bg-stone-50 rounded-xl border border-dashed border-stone-200">
+              No services selected yet. Choose a service to proceed.
+            </div>
+          ) : (
+            services.map(srv => {
+              const price = srv.discountPrice && srv.discountPrice < srv.price ? srv.discountPrice : srv.price;
+              return (
+                <div key={srv.id} className="py-2.5 flex items-center justify-between text-sm group">
+                  <div className="min-w-0 pr-2">
+                    <span className="font-semibold text-stone-800 block truncate">{srv.name}</span>
+                    <span className="text-xs text-stone-400 block">{srv.category} • {srv.duration} mins</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    <span className="font-bold text-stone-900">{formatCurrency(price)}</span>
+                    {onDeselectService && (
+                      <button
+                        type="button"
+                        onClick={e => {
+                          e.stopPropagation();
+                          onDeselectService(srv.id);
+                        }}
+                        className="w-6 h-6 rounded-lg text-stone-400 hover:text-rose-600 hover:bg-rose-50 border border-stone-200/80 hover:border-rose-200 flex items-center justify-center transition-colors cursor-pointer"
+                        title={`Deselect ${srv.name}`}
+                        aria-label={`Deselect ${srv.name}`}
+                      >
+                        <X size={13} />
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <span className="font-bold text-stone-900">{formatCurrency(price)}</span>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -186,12 +215,14 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
       {/* Confirm Button */}
       <button
         type="button"
-        disabled={isSubmitting}
+        disabled={isSubmitting || services.length === 0}
         onClick={onConfirm}
-        className="w-full py-4 px-6 rounded-2xl bg-stone-900 text-[#E2B755] hover:bg-black font-bold text-base transition-all shadow-md hover:shadow-xl active:scale-98 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer font-luxury"
+        className="w-full py-4 px-6 rounded-2xl bg-stone-900 text-[#E2B755] hover:bg-black font-bold text-base transition-all shadow-md hover:shadow-xl active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer font-luxury"
       >
         {isSubmitting ? (
           <span>Securing Your Chair...</span>
+        ) : services.length === 0 ? (
+          <span>Please Select a Service</span>
         ) : (
           <span>Confirm Appointment • {formatCurrency(finalTotal)}</span>
         )}

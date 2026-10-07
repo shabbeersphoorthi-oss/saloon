@@ -24,6 +24,7 @@ import {
   Check,
   AlertCircle,
   HelpCircle,
+  X,
 } from 'lucide-react';
 
 interface BookingPageProps {
@@ -209,17 +210,23 @@ export const BookingPage: React.FC<BookingPageProps> = ({
 
   const finalTotal = Math.max(0, subtotal + homeVisitFee - couponDiscount);
 
-  // Service toggling
+  // Service toggling & deselecting
   const handleToggleService = (srv: Service) => {
     const exists = selectedServices.some(s => s.id === srv.id);
     if (exists) {
-      if (selectedServices.length === 1) {
-        showToast('Please keep at least one service selected for your booking.', 'info');
-        return;
-      }
       setSelectedServices(prev => prev.filter(s => s.id !== srv.id));
+      showToast(`Deselected "${srv.name}"`, 'info');
     } else {
       setSelectedServices(prev => [...prev, srv]);
+      showToast(`Added "${srv.name}"`, 'success');
+    }
+  };
+
+  const handleDeselectService = (serviceId: string) => {
+    const target = selectedServices.find(s => s.id === serviceId);
+    setSelectedServices(prev => prev.filter(s => s.id !== serviceId));
+    if (target) {
+      showToast(`Deselected "${target.name}"`, 'info');
     }
   };
 
@@ -592,6 +599,54 @@ export const BookingPage: React.FC<BookingPageProps> = ({
                 </span>
               </div>
 
+              {/* Selected Services Active Pills with 1-click Deselect */}
+              {selectedServices.length > 0 ? (
+                <div className="bg-[#FAF8F3] p-3.5 rounded-2xl border border-amber-200/80 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-stone-900 flex items-center gap-1.5">
+                      <Scissors size={14} className="text-[#9C7A28]" />
+                      <span>Added to Your Booking ({selectedServices.length})</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedServices([]);
+                        showToast('All services deselected.', 'info');
+                      }}
+                      className="text-[11px] font-semibold text-stone-500 hover:text-rose-600 transition-colors cursor-pointer"
+                    >
+                      Deselect All
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 pt-0.5">
+                    {selectedServices.map(srv => (
+                      <span
+                        key={srv.id}
+                        className="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-xl bg-white border border-amber-300 text-xs font-semibold text-stone-900 shadow-xs"
+                      >
+                        <span>{srv.name}</span>
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleDeselectService(srv.id);
+                          }}
+                          className="w-4 h-4 rounded-full bg-stone-100 hover:bg-rose-100 hover:text-rose-700 text-stone-400 flex items-center justify-center transition-colors cursor-pointer"
+                          title={`Deselect ${srv.name}`}
+                          aria-label={`Deselect ${srv.name}`}
+                        >
+                          <X size={11} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3.5 rounded-2xl bg-stone-50 border border-dashed border-stone-200 text-center text-xs text-stone-500">
+                  No services selected. Tap any service below to add it to your appointment.
+                </div>
+              )}
+
               {/* Home Visit option callout & toggle in services step (Exclusively for Hair Cutting Only) */}
               <div className="bg-[#F0FAF4] border border-emerald-200/90 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
@@ -606,7 +661,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
                       </span>
                     </div>
                     <span className="text-[11px] text-emerald-800 block mt-0.5">
-                      Doorstep haircutting service by R & S Srinivas at your home across Ramanthapur & Hyderabad.
+                      Doorstep haircutting service by Bloom Saloon stylists at your home across Ramanthapur & Hyderabad.
                     </span>
                   </div>
                 </div>
@@ -677,16 +732,38 @@ export const BookingPage: React.FC<BookingPageProps> = ({
                           </div>
                         </div>
 
-                        <button
-                          type="button"
-                          className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-                            isSelected
-                              ? 'bg-stone-900 text-[#E2B755]'
-                              : 'bg-stone-100 text-stone-400 hover:bg-stone-200'
-                          }`}
-                        >
-                          {isSelected ? <Check size={14} /> : <Plus size={14} />}
-                        </button>
+                        {isSelected ? (
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <span className="text-[11px] font-bold text-amber-900 bg-amber-100 px-2 py-1 rounded-xl border border-amber-300 flex items-center gap-1">
+                              <Check size={12} />
+                              <span>Added</span>
+                            </span>
+                            <button
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                handleDeselectService(srv.id);
+                              }}
+                              className="py-1 px-2.5 rounded-xl text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
+                              title={`Deselect ${srv.name}`}
+                            >
+                              <X size={12} />
+                              <span>Deselect</span>
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleToggleService(srv);
+                            }}
+                            className="py-1 px-3 rounded-xl text-xs font-bold bg-stone-100 hover:bg-stone-900 hover:text-[#E2B755] text-stone-700 border border-stone-200 flex items-center gap-1 transition-all shrink-0 cursor-pointer shadow-xs active:scale-95"
+                          >
+                            <Plus size={13} />
+                            <span>Add</span>
+                          </button>
+                        )}
                       </div>
                     );
                   })}
@@ -1081,6 +1158,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
               homeAddress={homeAddress}
               onConfirm={handleConfirmAppointment}
               isSubmitting={isSubmitting}
+              onDeselectService={handleDeselectService}
             />
           </Tilt3D>
         </div>
