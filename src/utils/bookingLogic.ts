@@ -4,6 +4,7 @@ import { timeToMinutes, minutesToTime } from './formatters';
 export interface TimeSlotStatus {
   time: string; // e.g. "10:00 AM"
   isAvailable: boolean;
+  isOverdue?: boolean;
   reason?: string;
 }
 
@@ -64,9 +65,18 @@ export function getAvailableTimeSlots(
   const slots: TimeSlotStatus[] = [];
   const slotInterval = 30; // 30-minute intervals
 
+  // Current local time reference to identify overdue/past time slots
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const isToday = dateString === todayStr;
+  const isPastDate = dateString < todayStr;
+  const currentMinutesNow = now.getHours() * 60 + now.getMinutes();
+
   for (let current = openMins; current + totalDurationMinutes <= closeMins; current += slotInterval) {
     const slotEndTime = current + totalDurationMinutes;
     const timeFormatted = minutesToTime(current);
+
+    const isOverdue = isPastDate || (isToday && current < currentMinutesNow);
 
     let isAvailable = true;
     let reason = '';
@@ -109,6 +119,7 @@ export function getAvailableTimeSlots(
     slots.push({
       time: timeFormatted,
       isAvailable,
+      isOverdue,
       reason,
     });
   }

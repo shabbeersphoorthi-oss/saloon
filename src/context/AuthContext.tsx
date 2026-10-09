@@ -54,16 +54,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(() => {
     try {
-      const saved = localStorage.getItem('bloom_saloon_active_customer_v6');
-      return saved ? JSON.parse(saved) : INITIAL_CUSTOMERS[0];
+      const saved = localStorage.getItem('bloom_saloon_active_customer_v8');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.id && !parsed.id.startsWith('cust-1')) {
+          return parsed;
+        }
+      }
+      return null;
     } catch {
-      return INITIAL_CUSTOMERS[0];
+      return null;
     }
   });
 
   useEffect(() => {
     if (currentCustomer) {
-      localStorage.setItem('bloom_saloon_active_customer_v6', JSON.stringify(currentCustomer));
+      localStorage.setItem('bloom_saloon_active_customer_v8', JSON.stringify(currentCustomer));
+    } else {
+      localStorage.removeItem('bloom_saloon_active_customer_v8');
     }
   }, [currentCustomer]);
 

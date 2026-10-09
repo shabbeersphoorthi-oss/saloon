@@ -19,9 +19,6 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
   onToggleSelect,
   showSelectMode = false,
 }) => {
-  const hasDiscount = Boolean(service.discountPrice && service.discountPrice < service.price);
-  const effectivePrice = hasDiscount ? service.discountPrice! : service.price;
-
   return (
     <Tilt3D maxTilt={8} scale={1.02} depth={10} className="h-full">
       <div
@@ -85,13 +82,8 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
           <div>
             <div className="flex items-baseline gap-2">
               <span className="text-xl font-bold text-stone-900">
-                {service.priceRange || formatCurrency(effectivePrice)}
+                {service.priceRange || formatCurrency(service.price)}
               </span>
-              {hasDiscount && (
-                <span className="text-xs text-stone-400 line-through">
-                  {formatCurrency(service.price)}
-                </span>
-              )}
             </div>
             <span className="text-[10px] text-stone-400 block">Rate card pricing</span>
           </div>

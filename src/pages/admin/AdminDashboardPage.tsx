@@ -300,19 +300,25 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </h3>
 
             <div className="space-y-3">
-              {popularServicesRanked.map((item, index) => (
-                <div key={item.name} className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-stone-100 font-bold text-stone-700 flex items-center justify-center text-[10px]">
-                      {index + 1}
-                    </span>
-                    <span className="font-medium text-stone-800 truncate max-w-[150px]">
-                      {item.name}
-                    </span>
-                  </div>
-                  <span className="font-bold text-stone-900">{item.count} bookings</span>
+              {popularServicesRanked.length === 0 ? (
+                <div className="text-xs text-stone-400 py-4 text-center">
+                  No service bookings yet.
                 </div>
-              ))}
+              ) : (
+                popularServicesRanked.map((item, index) => (
+                  <div key={item.name} className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-stone-100 font-bold text-stone-700 flex items-center justify-center text-[10px]">
+                        {index + 1}
+                      </span>
+                      <span className="font-medium text-stone-800 truncate max-w-[150px]">
+                        {item.name}
+                      </span>
+                    </div>
+                    <span className="font-bold text-stone-900">{item.count} bookings</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -332,17 +338,23 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             </div>
 
             <div className="divide-y divide-stone-100 text-xs">
-              {customers.slice(0, 4).map(c => (
-                <div key={c.id} className="py-2.5 flex justify-between items-center">
-                  <div>
-                    <span className="font-bold text-stone-900 block">{c.name}</span>
-                    <span className="text-stone-400 text-[10px]">{c.phone}</span>
-                  </div>
-                  <span className="font-semibold text-stone-700 bg-stone-50 px-2 py-0.5 rounded-lg border">
-                    {c.totalVisits} visits
-                  </span>
+              {customers.length === 0 ? (
+                <div className="text-xs text-stone-400 py-4 text-center">
+                  No client records yet.
                 </div>
-              ))}
+              ) : (
+                customers.slice(0, 4).map(c => (
+                  <div key={c.id} className="py-2.5 flex justify-between items-center">
+                    <div>
+                      <span className="font-bold text-stone-900 block">{c.name}</span>
+                      <span className="text-stone-400 text-[10px]">{c.phone}</span>
+                    </div>
+                    <span className="font-semibold text-stone-700 bg-stone-50 px-2 py-0.5 rounded-lg border">
+                      {c.totalVisits} visits
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Service, Offer } from '../../types/salon';
+import { Service } from '../../types/salon';
 import { formatCurrency, formatDate, calculateEndTime } from '../../utils/formatters';
-import { Scissors, Calendar, Clock, User, Phone, Mail, Tag, ShieldCheck, X } from 'lucide-react';
+import { Scissors, Calendar, Clock, User, Phone, Mail, ShieldCheck, X } from 'lucide-react';
 
 interface BookingSummaryProps {
   services: Service[];
@@ -9,9 +9,7 @@ interface BookingSummaryProps {
   selectedTime: string;
   totalDuration: number;
   subtotal: number;
-  discount: number;
   finalTotal: number;
-  appliedCoupon?: Offer;
   customerName: string;
   customerPhone: string;
   customerEmail: string;
@@ -30,9 +28,7 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
   selectedTime,
   totalDuration,
   subtotal,
-  discount,
   finalTotal,
-  appliedCoupon,
   customerName,
   customerPhone,
   customerEmail,
@@ -170,7 +166,7 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
         )}
       </div>
 
-      {/* Financials & Coupon Breakdown */}
+      {/* Financials Breakdown */}
       <div className="space-y-2 pt-2 border-t border-stone-100 text-sm">
         <div className="flex justify-between text-stone-600">
           <span>Services Subtotal</span>
@@ -183,15 +179,6 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
               🏠 Home Visit Option
             </span>
             <span>+{formatCurrency(homeVisitFee)}</span>
-          </div>
-        )}
-
-        {discount > 0 && (
-          <div className="flex justify-between text-emerald-600 font-semibold">
-            <span className="flex items-center gap-1">
-              <Tag size={13} /> Coupon Discount ({appliedCoupon?.couponCode})
-            </span>
-            <span>-{formatCurrency(discount)}</span>
           </div>
         )}
 

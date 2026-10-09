@@ -32,22 +32,34 @@ import { checkTimeOverlap } from '../utils/bookingLogic';
 
 // Storage keys for local persistence
 const STORAGE_KEYS = {
-  SERVICES: 'bloom_saloon_services_v6',
-  CUSTOMERS: 'bloom_saloon_customers_v3',
-  APPOINTMENTS: 'bloom_saloon_appointments_v3',
-  OFFERS: 'bloom_saloon_offers_v3',
-  HOURS: 'bloom_saloon_hours_v3',
-  SETTINGS: 'bloom_saloon_settings_v4',
-  BLOCKED_DATES: 'bloom_saloon_blocked_dates_v3',
-  NOTIFICATIONS: 'bloom_saloon_notifications_v3',
+  SERVICES: 'bloom_saloon_services_v8',
+  CUSTOMERS: 'bloom_saloon_customers_v8',
+  APPOINTMENTS: 'bloom_saloon_appointments_v8',
+  OFFERS: 'bloom_saloon_offers_v8',
+  HOURS: 'bloom_saloon_hours_v8',
+  SETTINGS: 'bloom_saloon_settings_v8',
+  BLOCKED_DATES: 'bloom_saloon_blocked_dates_v8',
+  NOTIFICATIONS: 'bloom_saloon_notifications_v8',
 };
 
-// Helper to safely read from LocalStorage with fallback
+// Helper to safely read from LocalStorage with fallback and sample-data purge
 function loadFromStorage<T>(key: string, fallback: T): T {
   try {
     const item = localStorage.getItem(key);
     if (!item) return fallback;
-    return JSON.parse(item);
+    const parsed = JSON.parse(item);
+    // Sanitize any lingering legacy sample appointments or customers
+    if (Array.isArray(parsed)) {
+      const sanitized = parsed.filter((entry: any) => {
+        if (!entry || typeof entry !== 'object') return false;
+        if (entry.id && (entry.id.startsWith('app-00') || entry.id.startsWith('cust-') || entry.id.startsWith('off-') || entry.id.startsWith('notif-'))) {
+          return false;
+        }
+        return true;
+      });
+      return sanitized as unknown as T;
+    }
+    return parsed;
   } catch (e) {
     console.error(`Error reading ${key} from storage:`, e);
     return fallback;

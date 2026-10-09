@@ -58,7 +58,14 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100 text-sm">
-              {filtered.map(cust => (
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-12 text-stone-400">
+                    No customers registered yet. New customer bookings will be saved here automatically.
+                  </td>
+                </tr>
+              ) : (
+                filtered.map(cust => (
                 <tr key={cust.id} className="hover:bg-stone-50/60 transition-colors">
                   <td className="py-3.5 px-4">
                     <div className="font-bold text-stone-900">{cust.name}</div>
@@ -102,7 +109,8 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                     </button>
                   </td>
                 </tr>
-              ))}
+              )))
+            }
             </tbody>
           </table>
         </div>
@@ -110,7 +118,12 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
 
       {/* Mobile Cards */}
       <div className="lg:hidden space-y-3">
-        {filtered.map(cust => (
+        {filtered.length === 0 ? (
+          <div className="p-8 text-center text-xs text-stone-400 bg-white rounded-2xl border border-stone-200">
+            No customers registered yet. New customer bookings will be saved here automatically.
+          </div>
+        ) : (
+          filtered.map(cust => (
           <div
             key={cust.id}
             onClick={() => onSelectCustomer(cust)}
@@ -131,7 +144,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
               <span className="text-stone-400">Tap to view history →</span>
             </div>
           </div>
-        ))}
+        )))}
       </div>
     </div>
   );

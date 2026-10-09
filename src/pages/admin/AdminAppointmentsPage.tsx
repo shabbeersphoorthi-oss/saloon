@@ -169,11 +169,6 @@ export const AdminAppointmentsPage: React.FC = () => {
                     <strong>Home Visit Fee:</strong> ₹400 included
                   </div>
                 )}
-                {selectedAppointment.couponCode && (
-                  <div>
-                    <strong>Coupon Applied:</strong> {selectedAppointment.couponCode} (-{formatCurrency(selectedAppointment.discount)})
-                  </div>
-                )}
               </div>
             </div>
 
